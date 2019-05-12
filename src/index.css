@@ -1,13 +1,30 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.tableContainer {
+    overflow-x: auto;
+    margin-left: 6em;
+}
+.header {
+    left: 0;
+    width: 6em;
+    position: absolute;
+    font-weight: bold;
+    font-size: 1.2em;
+    border-right: 1px solid inherit;
+}
+.invisibleHeader {
+    font-weight: bold;
+    font-size: 1.2em;
+    /*Hiding text*/
+    text-indent: -999px;
+    white-space: nowrap;
+    overflow:hidden;
+    
+}
+.schedule {
+    display: inline-block;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+/*React table cell*/
+.rt-td {
+    border-bottom: 2px solid gray !important;
 }
+
