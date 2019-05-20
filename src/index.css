@@ -10,17 +10,20 @@
     font-size: 1.2em;
     border-right: 1px solid inherit;
 }
-.invisibleHeader {
+/* .invisibleHeader {
     font-weight: bold;
     font-size: 1.2em;
-    /*Hiding text*/
+    Hiding text
     text-indent: -999px;
     white-space: nowrap;
     overflow:hidden;
     
-}
+} */
 .schedule {
     display: inline-block;
+}
+.courseListButton {
+    width: 35px;
 }
 
 /*React table cell*/
@@ -28,3 +31,8 @@
     border-bottom: 2px solid gray !important;
 }
 
+/*To show checkboxes in dropdown menu*/
+.btn-group-toggle>.btn input[type=checkbox] {
+    /* clip: unset !important;
+    transform: translate(-27px, 5.5px); */
+}

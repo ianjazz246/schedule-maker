@@ -13,15 +13,17 @@
 //   }
 // }
 
-let Class = function (name, teacher, offeredBlocks) {
+let Class = function (name = "", teacher = "", offeredBlocks = [], id) {
     this.name = name;
     this.teacher = teacher;
     this.offeredBlocks = offeredBlocks;
+    this.id = id;
+    this.possibleBlocks = [];
 
     //add self to class schedules
-    for (const block of offeredBlocks) {
+    /* for (const block of offeredBlocks) {
         classTimes[block - 1].push(this);
-    }
+    } */
 }
 
 let classes = [
@@ -59,7 +61,7 @@ let reservedBlocks = [];
 
 
 
-function setup() {
+function prepareSchedule() {
     classTimes.length = numOfBlocks;
     //doesn't work. Fills classTime with a reference to the same array
     //classTimes.fill(new Array());
@@ -89,6 +91,13 @@ function setup() {
         }
     }
 }
+
+/**
+ * Returns a nested array.
+ * Each array inside is a schedule
+ * Each nested array holds a class object in the order of the schedule. Index 0 is the 1st block class, etc. 
+ */
+
 
 function makeSchedules(blocksPossibleClasses, currSchedule = []) {
 
@@ -151,7 +160,7 @@ function makeSchedules(blocksPossibleClasses, currSchedule = []) {
 
 //remove later
 
-setup();
+prepareSchedule();
 
 let classA = new Class("A", "Me", [1, 4]);
 let classB = new Class("B", "Me", [1, 3, 4]);
@@ -171,3 +180,5 @@ var schedules = makeSchedules(testSchedule);
 //console.log(schedules);
 global.numOfBlocks = numOfBlocks;
 global.schedules = schedules;
+
+export default Class;
