@@ -85,7 +85,7 @@ class ScheduleApp extends React.Component {
             }
 
             for (let block of c.offeredBlocks) {
-                console.log(block);
+                // console.log(block);
                 if (!reservedBlocks.includes(block)) {
                     c.possibleBlocks.push(block);
                 }
@@ -184,7 +184,7 @@ class ScheduleApp extends React.Component {
                 onSelect={(key) => {
                     if (key === "output") {
                         let classes = this.prepareSchedule(CoursesStore.getCourses());
-                        console.log(classes);
+                        // console.log(classes);
                         let schedules = this.makeSchedules(classes);
 
 
@@ -192,7 +192,7 @@ class ScheduleApp extends React.Component {
                         //     schedules: this.makeSchedules(classes)
                         // });
 
-                        console.log(schedules);
+                        // console.log(schedules);
 
                         this.setState({
                             schedules
@@ -437,7 +437,7 @@ class CourseInput extends React.Component {
 
     render() {
         const appInstance = this.props.scheduleApp;
-        console.log(this.state.courses);
+        // console.log(this.state.courses);
         return (
             <ListGroup>
                 {this.state.courses.map((course, index) => 
@@ -469,7 +469,7 @@ class CourseInputRow extends React.Component {
             course: CoursesStore.getCourses()[this.props.index].clone()
         };
 
-        console.log(this.state.course);
+        // console.log(this.state.course);
     }
 
     addCourse(index, appInstance) {
@@ -486,7 +486,7 @@ class CourseInputRow extends React.Component {
         // appInstance.setState({
         //     courses: newCourses
         // });
-        console.log(index);
+        // console.log(index);
         CoursesStore.removeCourse(index);
     }
 
@@ -513,11 +513,28 @@ class CourseInputRow extends React.Component {
     }
 
     updateCourse() {
+
+        //not a general purpose function for checking any array, just in this case where I know both are arrays (not objects or maps, for instance)
+        function arraysEqual(arr1, arr2) {
+            if (arr1.length !== arr2.length) return false;
+            for (const i in arr1) {
+                if (arr1[i] !== arr2[i]) return false;
+            }
+            return true;
+        }
         // console.log("Setting Course");
         // console.log("Before:" + this.state.course.name);
-        this.setState({
-            course: CoursesStore.getCourses()[this.props.index].clone()
-        });
+
+        //check if state is same so doesn't call setState and have to go through shouldComponentUpdate
+        let newCourse = CoursesStore.getCourses()[this.props.index].clone();
+
+        if (newCourse.name !== this.state.course.name || newCourse.teacher !== this.state.course.teacher ||
+            newCourse.id !== this.state.course.id ||  !arraysEqual(newCourse.offeredBlocks, this.state.course.offeredBlocks)) {
+                this.setState({
+                    course: newCourse
+                });
+            }
+
         // console.log("After:" + this.state.course.name);
         
     }
@@ -530,7 +547,7 @@ class CourseInputRow extends React.Component {
         CoursesStore.unsubscribeUpdate(this.updateCourses);
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
+    /* shouldComponentUpdate(nextProps, nextState) {
         if (this.state.course.name !== nextState.course.name || this.state.course.teacher !== nextState.course.teacher ||
             this.state.course.offeredBlocks !== nextState.course.offeredBlocks || nextProps.teacher !== this.props.teacher
             || nextProps.offeredBlocks !== this.props.offeredBlocks || nextProps.index !== this.props.index) {
@@ -538,7 +555,7 @@ class CourseInputRow extends React.Component {
             return true;
         }
         return false;
-    }
+    } */
 
     render() {
 
