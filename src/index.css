@@ -36,3 +36,12 @@
     /* clip: unset !important;
     transform: translate(-27px, 5.5px); */
 }
+
+input .courseInput {
+    min-width: 15em;
+    min-height: 2em;
+}
+
+.courseInput {
+    margin-right: 4px;
+}

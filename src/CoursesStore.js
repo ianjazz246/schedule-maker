@@ -6,6 +6,9 @@ const Class = require("./class.js");
 
 let ids = 0;
 
+//should be 8
+let blocks = 4;
+
 let courses = [new Class("", "", [], ids++)];
 
 //Test Schedule:
@@ -32,6 +35,13 @@ module.exports = {
     unsubscribeUpdate: function(callback) {
         emitter.removeListener("update", callback);
     },
+    updateCourse: function(index, newValues) {
+        for (const prop in newValues) {
+            courses[index][prop] = newValues[prop];
+        }
+
+        emitter.emit("update");
+    },
     subscribeAddRemove: function(callback) {
         emitter.addListener("addRemove", callback);
     },
@@ -48,14 +58,20 @@ module.exports = {
         courses = coursesCopy;
         emitter.emit("addRemove");
     },
-    updateCourse: function(index, newValues) {
-        console.log(courses[index]["name"]);
-        for (const prop in newValues) {
-            courses[index][prop] = newValues[prop];
+    subscribeBlocksChange: function(callback) {
+        emitter.addListener("blocksChange", callback);
+    },
+    unsubscribeBlocksChange: function(callback) {
+        emitter.removeListener("blocksChange", callback);
+    },
+    getBlocks: function() {
+        return blocks;
+    },
+    changeBlocks: function(newBlocks) {
+        if (newBlocks !== blocks) {
+            blocks = newBlocks;
+            emitter.emit("blocksChange");
         }
-        console.log(courses[index]["name"]);
-
-
-        emitter.emit("update");
     }
+
 }

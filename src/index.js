@@ -13,6 +13,7 @@ import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import Alert from "react-bootstrap/Alert";
+import Navbar from "react-bootstrap/Navbar";
 
 //Import react-table
 import ReactTable from "react-table";
@@ -24,6 +25,8 @@ import "react-table/react-table.css"
 
 import "./index.css";
 // import "./schedule.js";
+
+import * as serviceWorker from "./serviceWorker";
 
 
 //Datastore
@@ -180,33 +183,38 @@ class ScheduleApp extends React.Component {
         return (
             //later: add Tab to switch between output and input
             //<ScheduleDisplay schedules={this.state.schedules} />
-            <Tabs
-                onSelect={(key) => {
-                    if (key === "output") {
-                        let classes = this.prepareSchedule(CoursesStore.getCourses());
-                        // console.log(classes);
-                        let schedules = this.makeSchedules(classes);
+            <>
+                <Navbar bg="light">
+                    <Navbar.Brand>Schedule Maker</Navbar.Brand>
+                </Navbar>
+                <Tabs
+                    onSelect={(key) => {
+                        if (key === "output") {
+                            let classes = this.prepareSchedule(CoursesStore.getCourses());
+                            // console.log(classes);
+                            let schedules = this.makeSchedules(classes);
 
 
-                        // this.setState({
-                        //     schedules: this.makeSchedules(classes)
-                        // });
+                            // this.setState({
+                            //     schedules: this.makeSchedules(classes)
+                            // });
 
-                        // console.log(schedules);
+                            // console.log(schedules);
 
-                        this.setState({
-                            schedules
-                        })
-                    }
-                }}
-            >
-                <Tab eventKey="input" title="Input">
-                    <CourseInput courses={this.state.courses} scheduleApp={this} />
-                </Tab>
-                <Tab eventKey="output" title="Output">
-                    <ScheduleDisplay schedules={this.state.schedules} scheduleApp={this} />
-                </Tab>
-            </Tabs>
+                            this.setState({
+                                schedules
+                            })
+                        }
+                    }}
+                >
+                    <Tab eventKey="input" title="Input">
+                        <CourseInput courses={this.state.courses} scheduleApp={this} />
+                    </Tab>
+                    <Tab eventKey="output" title="Output">
+                        <ScheduleDisplay schedules={this.state.schedules} scheduleApp={this} />
+                    </Tab>
+                </Tabs>
+            </>
         )
     }
 }
@@ -287,7 +295,21 @@ class ScheduleDisplay extends React.Component {
         const appInstance = this.props.scheduleApp;
 
         let columns = [];
-        for (let i = 0; i < appInstance.state.blocks; ++i) {
+
+        const blocks = CoursesStore.getBlocks();
+
+        let errorAlert = (
+            <Alert variant="danger">
+                <Alert.Heading>Unable to create schedule</Alert.Heading>
+                <p>Make sure you have at least {blocks} classes. There are no possible schedules from your classes. If you believe this is a mistake, please contact me at [CONTACT]</p>
+            </Alert>
+        );
+
+        if (isNaN(blocks)) {
+            return errorAlert;
+        }
+
+        for (let i = 0; i < blocks; ++i) {
             columns.push(
                 {
                     Header: "Block " + (i + 1),
@@ -322,12 +344,7 @@ class ScheduleDisplay extends React.Component {
         ];
 
         if (data.length < 1) {
-            return (
-                <Alert variant="danger">
-                    <Alert.Heading>Unable to create schedule</Alert.Heading>
-                    <p>Make sure you have at least {appInstance.state.blocks} classes. There are no possible schedules from your classes. If you believe this is a mistake, please contact me at [CONTACT]</p>
-                </Alert>
-            )
+            return errorAlert;
         }
         else {
             return (
@@ -390,6 +407,7 @@ class CourseInput extends React.Component {
             courses: CoursesStore.getCourses()
         };
         this.onAddRemove = this.onAddRemove.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
     onAddRemove() {
@@ -407,6 +425,20 @@ class CourseInput extends React.Component {
             return true;
         }
         return false;
+    }
+
+    handleChange(event) {
+        let newValue = parseInt(event.target.value);
+        CoursesStore.changeBlocks(parseInt(event.target.value));
+        this.forceUpdate();
+    }
+
+    getInputValue() {
+        let n;
+        if (isNaN((n = CoursesStore.getBlocks()))) {
+                return "";
+        }
+        return n;
     }
 
     /* addCourse(index, appInstance) {
@@ -439,6 +471,9 @@ class CourseInput extends React.Component {
         const appInstance = this.props.scheduleApp;
         // console.log(this.state.courses);
         return (
+            <>
+            <label htmlFor="blocks" className="courseInput">Number of Blocks:</label>
+            <input value={this.getInputValue()} onChange={this.handleChange} type="number" name="blocks" style={{minHeight: "2em"}} id="blocks" min="1"></input>
             <ListGroup>
                 {this.state.courses.map((course, index) => 
                     <CourseInputRow 
@@ -452,6 +487,7 @@ class CourseInput extends React.Component {
                     )
                 }
             </ListGroup>
+            </>
         )
     }
 
@@ -464,9 +500,11 @@ class CourseInputRow extends React.Component {
         this.addCourse = this.addCourse.bind(this);
         this.removeCourse = this.removeCourse.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.updateCourses = this.updateCourse.bind(this);
+        this.onCourseUpdate = this.onCourseUpdate.bind(this);
+        this.onBlockUpdate = this.onBlockUpdate.bind(this);
         this.state = {
-            course: CoursesStore.getCourses()[this.props.index].clone()
+            course: CoursesStore.getCourses()[this.props.index].clone(),
+            blocks: CoursesStore.getBlocks()
         };
 
         // console.log(this.state.course);
@@ -512,7 +550,7 @@ class CourseInputRow extends React.Component {
 
     }
 
-    updateCourse() {
+    onCourseUpdate() {
 
         //not a general purpose function for checking any array, just in this case where I know both are arrays (not objects or maps, for instance)
         function arraysEqual(arr1, arr2) {
@@ -539,12 +577,23 @@ class CourseInputRow extends React.Component {
         
     }
 
+    onBlockUpdate() {
+        const newBlocks = CoursesStore.getBlocks();
+        if (!isNaN(newBlocks)) {
+            this.setState({
+            blocks: newBlocks
+        });
+        }
+    }
+
     componentWillMount() {
-        CoursesStore.subscribeUpdate(this.updateCourses);
+        CoursesStore.subscribeUpdate(this.onCourseUpdate);
+        CoursesStore.subscribeBlocksChange(this.onBlockUpdate);
     }
 
     componentWillUnmount() {
-        CoursesStore.unsubscribeUpdate(this.updateCourses);
+        CoursesStore.unsubscribeUpdate(this.onCourseUpdate);
+        CoursesStore.unsubscribeBlocksChange(this.onBlockUpdate);
     }
 
     /* shouldComponentUpdate(nextProps, nextState) {
@@ -568,16 +617,20 @@ class CourseInputRow extends React.Component {
             <ListGroup.Item>
                 <form>
                     <div style={{ display: "inline-block" }}>
+                        <label htmlFor="nameInput" style={{marginRight: "4px"}}>Course Name: </label>
                         <input
-                            style={{ marginRight: "4px" }}
+                            id="nameInput"
+                            className="courseInput"
                             placeholder="Class name"
                             type="text"
                             name="name"
                             value={this.state.course.name}
                             onChange={(event) => this.handleChange(event, index, appInstance)}
                         ></input>
+                        <label htmlFor="teacherInput" style={{marginRight: "4px"}}>Teacher: </label>
                         <input
-                            style={{ marginRight: "4px" }}
+                            id="teacherInput"
+                            className="courseInput"
                             placeholder="Teacher"
                             type="text"
                             name="teacher"
@@ -599,16 +652,21 @@ class CourseInputRow extends React.Component {
                                         /* console.log(index);
                                         console.log(appInstance.state.courses[0]);
                                         console.log(value); */
-                                        const newCourses = appInstance.state.courses.slice();
+
+                                        CoursesStore.updateCourse({
+                                            offeredBlocks: value
+                                        });
+
+                                        /* const newCourses = appInstance.state.courses.slice();
                                         newCourses[index].offeredBlocks = value;
 
                                         appInstance.setState({
                                             courses: newCourses
-                                        });
+                                        }); */
                                     }}
                                 >
                                     {
-                                        (new Array(appInstance.state.blocks).fill(null)).map((_, index2) =>
+                                        (new Array(this.state.blocks).fill(null)).map((_, index2) =>
 
                                             <ToggleButton key={index2} value={index2} style={{ width: "100%" }}>Block {index2 + 1}</ToggleButton>
                                         )
@@ -633,3 +691,6 @@ ReactDOM.render(
     <ScheduleApp />,
     document.getElementById("root")
 );
+
+//register service worker
+serviceWorker.register();
