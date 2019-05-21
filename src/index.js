@@ -61,7 +61,7 @@ class ScheduleApp extends React.Component {
     prepareSchedule(classes) {
         //Prepare schedules
         let classTimes = [];
-        let numOfBlocks = this.state.blocks;
+        let numOfBlocks = CoursesStore.getBlocks();
         classTimes.length = numOfBlocks;
 
         let reservedBlocks = [];
@@ -653,7 +653,7 @@ class CourseInputRow extends React.Component {
                                         console.log(appInstance.state.courses[0]);
                                         console.log(value); */
 
-                                        CoursesStore.updateCourse({
+                                        CoursesStore.updateCourse(index, {
                                             offeredBlocks: value
                                         });
 
