@@ -145,12 +145,11 @@ class ScheduleApp extends React.Component {
                 for (let block of blocksPossibleClasses) {
                     if (block.length < 1) {
                         noSchedule = true;
-                        break;
+                        // break;
                     }
                 }
 
                 if (noSchedule) {
-                    continue;
                 }
                 else {
                     let partialPossibleSchedules = this.makeSchedules(blocksPossibleClasses.slice(1));
@@ -160,18 +159,19 @@ class ScheduleApp extends React.Component {
                         possibleSchedules.push([aClass].concat(partialSchedule));
                     }
 
-                    for (const [i, el] of removals.entries()) {
 
-                        //need to modify original blocksPossibleClasses
-
-                        //blocksPossibleClasses[i] = blocksPossibleClasses[i].concat(el);
-                        blocksPossibleClasses[i].push(...el);
-                    }
-
-                    removals = [];
 
                     //possibleSchedules.push(makeSchedules(blocksPossibleClasses.slice(1), currSchedule.push(block)));
                 }
+
+                //add back in the removed classes
+                for (const [i, el] of removals.entries()) {
+                        //need to modify original blocksPossibleClasses
+
+                        //blocksPossibleClasses[i] = blocksPossibleClasses[i].concat(el);
+                        blocksPossibleClasses[i].push(...el);                    
+                }
+                removals = [];
             }
             return possibleSchedules;
         }
@@ -314,7 +314,7 @@ class ScheduleDisplay extends React.Component {
                 {
                     Header: "Block " + (i + 1),
                     id: "block" + (i + 1),
-                    accessor: d => d[i].name
+                    accessor: d => d[i].name,
                 }
             )
         }
@@ -615,6 +615,7 @@ class CourseInputRow extends React.Component {
 
         return (
             <ListGroup.Item>
+                {/* Use react-bootstrap forms */}
                 <form>
                     <div style={{ display: "inline-block" }}>
                         <label htmlFor="nameInput" style={{marginRight: "4px"}}>Course Name: </label>

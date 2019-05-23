@@ -6,17 +6,29 @@ const Class = require("./class.js");
 
 let ids = 0;
 
-//should be 8
-let blocks = 4;
+let blocks = 8;
 
 let courses = [new Class("", "", [], ids++)];
 
 //Test Schedule:
 courses = [
-    new Class("A", "A", [0, 3], ids++),
-    new Class("B", "B", [0, 2, 3], ids++),
-    new Class("C", "C", [0, 1], ids++),
-    new Class("D", "D", [2, 3], ids++)
+    new Class("A", "A", [0, 3, 6, 7], ids++),
+    new Class("B", "B", [0, 1, 2, 3, 5], ids++),
+    new Class("C", "C", [0, 1, 6, 7], ids++),
+    new Class("D", "D", [2, 3, 5, 6], ids++),
+    new Class("E", "E", [2, 3, 4, 6], ids++),
+    new Class("F", "F", [0, 1, 2, 3, 4, 5, 6, 7], ids++),
+    new Class("G", "G", [0, 1, 2, 3, 4], ids++),
+    new Class("H", "H", [0, 1, 2, 6, 7], ids++),
+/*     new Class("A", "A", [0], ids++),
+    new Class("B", "B", [1], ids++),
+    new Class("C", "C", [2], ids++),
+    new Class("D", "D", [3], ids++),
+    new Class("E", "E", [4], ids++),
+    new Class("F", "F", [5], ids++),
+    new Class("G", "G", [6], ids++),
+    new Class("H", "H", [7], ids++), */
+
 ];
 
 

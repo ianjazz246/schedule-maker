@@ -45,3 +45,8 @@ input .courseInput {
 .courseInput {
     margin-right: 4px;
 }
+
+.nav-link {
+    /* height: 1.5em !important;
+    width: 2em !important; */
+}
