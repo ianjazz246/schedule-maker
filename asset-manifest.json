@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/schedule-maker/static/css/main.df077535.chunk.css",
+    "main.js": "/schedule-maker/static/js/main.72a997a9.chunk.js",
+    "main.js.map": "/schedule-maker/static/js/main.72a997a9.chunk.js.map",
+    "runtime~main.js": "/schedule-maker/static/js/runtime~main.93d4254d.js",
+    "runtime~main.js.map": "/schedule-maker/static/js/runtime~main.93d4254d.js.map",
+    "static/js/2.56a9cf2d.chunk.js": "/schedule-maker/static/js/2.56a9cf2d.chunk.js",
+    "static/js/2.56a9cf2d.chunk.js.map": "/schedule-maker/static/js/2.56a9cf2d.chunk.js.map",
+    "index.html": "/schedule-maker/index.html",
+    "precache-manifest.0e12e6b4c92d0ccec6975f4b9fcd24ba.js": "/schedule-maker/precache-manifest.0e12e6b4c92d0ccec6975f4b9fcd24ba.js",
+    "service-worker.js": "/schedule-maker/service-worker.js",
+    "static/css/main.df077535.chunk.css.map": "/schedule-maker/static/css/main.df077535.chunk.css.map"
+  }
+}
