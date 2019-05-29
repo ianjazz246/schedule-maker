@@ -119,7 +119,7 @@ function makeSchedules(blocksPossibleClasses, currSchedule = []) {
                 removals[i] = [];
             }
 
-            let classPossibleSchedules = [];
+            //let classPossibleSchedules = [];
 
             //make deep copy of blocksPossibleClasses
             //let tempPossibleSchedules = JSON.parse(JSON.stringify(blocksPossibleClasses));

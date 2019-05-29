@@ -50,10 +50,10 @@ body {
 }
 
 /*To show checkboxes in dropdown menu*/
-.btn-group-toggle>.btn input[type=checkbox] {
-    /* clip: unset !important;
-    transform: translate(-27px, 5.5px); */
-}
+/* .btn-group-toggle>.btn input[type=checkbox] {
+    clip: unset !important;
+    transform: translate(-27px, 5.5px);
+} */
 
 input .courseInput {
     min-width: 15em;
@@ -64,10 +64,10 @@ input .courseInput {
     margin-right: 4px;
 }
 
-.nav-link {
-    /* height: 1.5em !important;
-    width: 2em !important; */
-}
+/* .nav-link {
+    height: 1.5em !important;
+    width: 2em !important;
+} */
 
 /*Odd table rows*/
 .rt-tr.-odd {
