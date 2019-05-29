@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/static/css/main.2e5853d3.chunk.css",
-    "main.js": "/static/js/main.b20b6f67.chunk.js",
-    "main.js.map": "/static/js/main.b20b6f67.chunk.js.map",
-    "runtime~main.js": "/static/js/runtime~main.a8a9905a.js",
-    "runtime~main.js.map": "/static/js/runtime~main.a8a9905a.js.map",
-    "static/js/2.493c7a6d.chunk.js": "/static/js/2.493c7a6d.chunk.js",
-    "static/js/2.493c7a6d.chunk.js.map": "/static/js/2.493c7a6d.chunk.js.map",
-    "index.html": "/index.html",
-    "precache-manifest.9d265a6bc34e227551f96b0ebedcc89f.js": "/precache-manifest.9d265a6bc34e227551f96b0ebedcc89f.js",
-    "service-worker.js": "/service-worker.js",
-    "static/css/main.2e5853d3.chunk.css.map": "/static/css/main.2e5853d3.chunk.css.map"
+    "main.css": "/schedule-maker/static/css/main.2e5853d3.chunk.css",
+    "main.js": "/schedule-maker/static/js/main.ff75ea76.chunk.js",
+    "main.js.map": "/schedule-maker/static/js/main.ff75ea76.chunk.js.map",
+    "runtime~main.js": "/schedule-maker/static/js/runtime~main.93d4254d.js",
+    "runtime~main.js.map": "/schedule-maker/static/js/runtime~main.93d4254d.js.map",
+    "static/js/2.493c7a6d.chunk.js": "/schedule-maker/static/js/2.493c7a6d.chunk.js",
+    "static/js/2.493c7a6d.chunk.js.map": "/schedule-maker/static/js/2.493c7a6d.chunk.js.map",
+    "index.html": "/schedule-maker/index.html",
+    "precache-manifest.542461fc1373aa8a13e420be15ccf6ea.js": "/schedule-maker/precache-manifest.542461fc1373aa8a13e420be15ccf6ea.js",
+    "service-worker.js": "/schedule-maker/service-worker.js",
+    "static/css/main.2e5853d3.chunk.css.map": "/schedule-maker/static/css/main.2e5853d3.chunk.css.map"
   }
 }
