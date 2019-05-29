@@ -17,4 +17,4 @@ class Class {
     }
 }
 
-module.exports = Class;
+export default Class;

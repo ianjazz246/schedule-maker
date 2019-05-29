@@ -14,25 +14,27 @@ import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import Alert from "react-bootstrap/Alert";
 import Navbar from "react-bootstrap/Navbar";
+import Form from "react-bootstrap/Form";
+// import Row from "react-bootstrap/Row";
+// import Col from "react-bootstrap/Col";
 
 //Import react-table
 import ReactTable from "react-table";
-import "react-table/react-table.css"
-
-//react-fixed-hoc-tables
-// import withFixedColumns from "react-table-hoc-fixed-columns";
-//import "react-table-hoc-fixed-columns/lib/styles.css"
+// import "react-table/react-table.css";
 
 import "./index.css";
 // import "./schedule.js";
 
-import * as serviceWorker from "./serviceWorker";
+//import service worker for progressive web app
+import * as serviceWorker from './serviceWorker';
 
+// import Class from "./class.js";
 
 //Datastore
-const CoursesStore = require("./CoursesStore.js");
+import CoursesStore from "./CoursesStore.js";
+// const CoursesStore = require("./CoursesStore.js");
 
-const Class = require("./class.js");
+
 
 
 
@@ -44,7 +46,7 @@ class ScheduleApp extends React.Component {
         this.prepareSchedule = this.prepareSchedule.bind(this);
         // this.ids = 0;
 
-        //to change
+        //to remove
         this.state = {
             schedules: [],
             // courses: [new Class("A", "A", [0, 3], this.ids++), new Class("B", "B", [0, 2, 3], this.ids++), new Class("C", "C", [0, 1], this.ids++), new Class("D", "D", [2, 3], this.ids++)],
@@ -92,7 +94,12 @@ class ScheduleApp extends React.Component {
                 if (!reservedBlocks.includes(block)) {
                     c.possibleBlocks.push(block);
                 }
-                classTimes[block].push(c);
+
+                let classesInBlock = classTimes[block];
+
+                if (classesInBlock !== undefined) {
+                    classesInBlock.push(c);
+                }
             }
         }
 
@@ -113,7 +120,9 @@ class ScheduleApp extends React.Component {
 
         //if only one block in blocksArray, then have reached end of recursion. Return values.
         if (blocksPossibleClasses.length < 2) {
-            return blocksPossibleClasses;
+
+            //Create array with each class in a separate index
+            return blocksPossibleClasses[0].map(val => [val]);
         }
         else {
             for (let aClass of blocksPossibleClasses[0]) {
@@ -125,7 +134,7 @@ class ScheduleApp extends React.Component {
                     removals[i] = [];
                 }
 
-                let classPossibleSchedules = [];
+                // let classPossibleSchedules = [];
 
                 //make deep copy of blocksPossibleClasses
                 //let tempPossibleSchedules = JSON.parse(JSON.stringify(blocksPossibleClasses));
@@ -235,9 +244,9 @@ class ScheduleApp extends React.Component {
 } */
 
 class ScheduleDisplay extends React.Component {
-    constructor(props) {
+    /* constructor(props) {
         super(props);
-    }
+    } */
 
     render() {
         //let headerArray = [];
@@ -292,7 +301,7 @@ class ScheduleDisplay extends React.Component {
 
 
         const data = this.props.schedules;
-        const appInstance = this.props.scheduleApp;
+        // const appInstance = this.props.scheduleApp;
 
         let columns = [];
 
@@ -311,10 +320,35 @@ class ScheduleDisplay extends React.Component {
 
         for (let i = 0; i < blocks; ++i) {
             columns.push(
-                {
+                /* {
                     Header: "Block " + (i + 1),
                     id: "block" + (i + 1),
-                    accessor: d => d[i].name,
+                    // accessor: d => d[i].name,
+                    columns: [{
+                        id: "class" + (i + 1),
+                        Header: "Class",
+                        accessor: d => d[i].name
+                    },
+                    {
+                        id: "teacher" + (i + 1),
+                        Header: "Teacher",
+                        style: {borderRight: "1px solid rgba(0, 0, 0, 0.2"},
+                        aggregate: (values, rows) => values.length,
+                        Aggregated: row => {
+                            return (
+                                <span>
+                                    ({row.value})
+                                </span>
+                            )
+                        },
+                        accessor: d => d[i].teacher
+                    }]
+                } */
+                {
+                    id: "class" + (i + 1),
+                    Header: "Block " + (i + 1),
+                    style: {borderRight: "1px solid rgba(0, 0, 0, 0.2"},
+                    accessor: d => d[i].name
                 }
             )
         }
@@ -349,11 +383,22 @@ class ScheduleDisplay extends React.Component {
         else {
             return (
                 <ReactTable
-                    style={{ padding: "10px" }}
+                    style={{ padding: "10px"}}
                     data={data}
                     columns={columns}
                     className="-striped -highlight"
                     defaultSorted={DEFAULT_SORT}
+                    filterable={true}
+                    SubComponent={row => {
+                        return (
+                            <div className="rt-tr">
+                            <div className="rt-td" style={{flex: "35 0 auto", width: "35px", maxWidth: "35px", wordWrap: "break-word"}}>Teacher</div>
+                                {row.original.map((val , index) =>
+                                    <div key={index} className="rt-td" style={{flex: "100 0 auto", width: "100px"}}>{val.teacher}</div>
+                                )}
+                            </div>
+                        )
+                    }}
                 />
             )
         }
@@ -428,7 +473,7 @@ class CourseInput extends React.Component {
     }
 
     handleChange(event) {
-        let newValue = parseInt(event.target.value);
+        // let newValue = parseInt(event.target.value);
         CoursesStore.changeBlocks(parseInt(event.target.value));
         this.forceUpdate();
     }
@@ -472,10 +517,13 @@ class CourseInput extends React.Component {
         // console.log(this.state.courses);
         return (
             <>
-            <label htmlFor="blocks" className="courseInput">Number of Blocks:</label>
-            <input value={this.getInputValue()} onChange={this.handleChange} type="number" name="blocks" style={{minHeight: "2em"}} id="blocks" min="1"></input>
+            <Form.Group controlId="blocksInput">
+                <Form.Label>Number of blocks:</Form.Label>
+                <Form.Control value={this.getInputValue()} onChange={this.handleChange} type="number" min="1"/>
+            </Form.Group>
             <ListGroup>
-                {this.state.courses.map((course, index) => 
+                {
+                    this.state.courses.map((course, index) => 
                     <CourseInputRow 
                         key={course.id}
                         name={course.name}
@@ -615,8 +663,23 @@ class CourseInputRow extends React.Component {
 
         return (
             <ListGroup.Item>
-                {/* Use react-bootstrap forms */}
-                <form>
+                    <Form.Group controlId={"courseInput" + index}>
+                        <Form.Label>Class Name</Form.Label>
+                        <Form.Control
+                            placeholder="Class Name"
+                            name="name"
+                            value={this.state.course.name}
+                            onChange={(event) => this.handleChange(event, index, appInstance)}/>
+                    </Form.Group>
+                    <Form.Group controlId={"courseInput" + index}>
+                        <Form.Label>Teacher</Form.Label>
+                        <Form.Control
+                            placeholder="Teacher"
+                            name="teacher"
+                            value={this.state.course.teacher}
+                            onChange={(event) => this.handleChange(event, index, appInstance)}/>
+                    </Form.Group>
+                {/* <form>
                     <div style={{ display: "inline-block" }}>
                         <label htmlFor="nameInput" style={{marginRight: "4px"}}>Course Name: </label>
                         <input
@@ -639,8 +702,9 @@ class CourseInputRow extends React.Component {
                             onChange={(event) => this.handleChange(event, index, appInstance)}
                         >
                         </input>
-                    </div>
-                    <ButtonGroup style={{ marginRight: "4px" }}>
+                    </div> */}
+                    <div className="input-button-group">
+                    <ButtonGroup style={{ marginRight: "4px", paddingBottom: "5px" }}>
                         <Dropdown>
                             <Dropdown.Toggle variant="primary">Offered Blocks</Dropdown.Toggle>
                             <Dropdown.Menu style={{ padding: "0" }}>
@@ -678,11 +742,16 @@ class CourseInputRow extends React.Component {
                         </Dropdown>
                         {/* </DropdownButton> */}
                     </ButtonGroup>
-                    <ButtonGroup>
+                    <ButtonGroup style={{ paddingBottom: "5px"}}>
                         <Button className="courseListButton" onClick={() => this.addCourse(index, appInstance)}>+</Button>
-                        <Button className="courseListButton" onClick={() => this.removeCourse(index, appInstance)}>-</Button>
+                        <Button className="courseListButton"
+                                onClick={() => CoursesStore.getCourses().length < 2 ? CoursesStore.updateCourse(index, {name: "", teacher: "", offeredBlocks: []}) :
+                                this.removeCourse(index, appInstance)}
+                        >-
+                        </Button>
                     </ButtonGroup>
-                </form>
+                    </div>
+                {/* </form> */}
             </ListGroup.Item>
         )
     }
