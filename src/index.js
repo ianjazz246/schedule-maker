@@ -310,7 +310,7 @@ class ScheduleDisplay extends React.Component {
         let errorAlert = (
             <Alert variant="danger">
                 <Alert.Heading>Unable to create schedule</Alert.Heading>
-                <p>Make sure you have at least {blocks} classes. There are no possible schedules from your classes. If you believe this is a mistake, please contact me at [CONTACT]</p>
+                <p>There are no possible schedules from your classes. Make sure you have at least {blocks} classes. If you believe this is a mistake, please leave an bug report on Github.</p>
             </Alert>
         );
 
