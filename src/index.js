@@ -1,22 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
-//import Table from "react-bootstrap/Table";
+import { LinkContainer } from 'react-router-bootstrap';
 
-import ListGroup from "react-bootstrap/ListGroup";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
-import Button from "react-bootstrap/Button";
-import Dropdown from "react-bootstrap/Dropdown";
-//import DropdownButton from "react-bootstrap/DropdownButton";
-import ToggleButton from "react-bootstrap/ToggleButton";
-import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
-import Tabs from "react-bootstrap/Tabs";
-import Tab from "react-bootstrap/Tab";
-import Alert from "react-bootstrap/Alert";
-import Navbar from "react-bootstrap/Navbar";
-import Form from "react-bootstrap/Form";
-// import Row from "react-bootstrap/Row";
-// import Col from "react-bootstrap/Col";
+import { ListGroup, ButtonGroup, Button, Dropdown, ToggleButton, ToggleButtonGroup, Alert, Navbar, Nav, Form } from "react-bootstrap";
 
 //Import react-table
 import ReactTable from "react-table";
@@ -44,9 +32,11 @@ class ScheduleApp extends React.Component {
         super(props);
         this.makeSchedules = this.makeSchedules.bind(this);
         this.prepareSchedule = this.prepareSchedule.bind(this);
+        this.scheduleDisplayRouteRender = this.scheduleDisplayRouteRender.bind(this);
         // this.ids = 0;
 
         //to remove
+        //should use CourseStore or other stuff
         this.state = {
             schedules: [],
             // courses: [new Class("A", "A", [0, 3], this.ids++), new Class("B", "B", [0, 2, 3], this.ids++), new Class("C", "C", [0, 1], this.ids++), new Class("D", "D", [2, 3], this.ids++)],
@@ -187,34 +177,55 @@ class ScheduleApp extends React.Component {
 
     }
 
+    scheduleDisplayRouteRender() {
+        return (<ScheduleDisplay schedules={this.state.schedules} />)
+    }
+
     render() {
         // console.log(this.state.courses);
         return (
-            //later: add Tab to switch between output and input
-            //<ScheduleDisplay schedules={this.state.schedules} />
-            <>
+            <Router
+                basename="/schedule-maker"
+            >
                 <Navbar bg="light">
                     <Navbar.Brand>Schedule Maker</Navbar.Brand>
+                    <Nav variant="pills">
+                        <Nav.Item>
+                            <LinkContainer to="/input">
+                                <Nav.Link>Input</Nav.Link>
+                            </LinkContainer>
+                        </Nav.Item>
+                        
+                        
+                            <Nav.Item 
+                                onSelect={(key) => {
+                                    if (key === "output") {
+                                        let classes = this.prepareSchedule(CoursesStore.getCourses());
+                                        // console.log(classes);
+                                        let schedules = this.makeSchedules(classes);
+
+
+                                        // this.setState({
+                                        //     schedules: this.makeSchedules(classes)
+                                        // });
+
+                                        // console.log(schedules);
+
+                                        this.setState({
+                                            schedules
+                                        })
+                                    }
+                                }}>
+                                    <LinkContainer to="/output">
+                                        <Nav.Link>Output</Nav.Link>
+                                        </LinkContainer>
+                                </Nav.Item>
+                        
+                    </Nav>
+
                 </Navbar>
-                <Tabs
-                    onSelect={(key) => {
-                        if (key === "output") {
-                            let classes = this.prepareSchedule(CoursesStore.getCourses());
-                            // console.log(classes);
-                            let schedules = this.makeSchedules(classes);
-
-
-                            // this.setState({
-                            //     schedules: this.makeSchedules(classes)
-                            // });
-
-                            // console.log(schedules);
-
-                            this.setState({
-                                schedules
-                            })
-                        }
-                    }}
+                {/* <Tabs
+                    
                 >
                     <Tab eventKey="input" title="Input">
                         <CourseInput courses={this.state.courses} scheduleApp={this} />
@@ -222,8 +233,10 @@ class ScheduleApp extends React.Component {
                     <Tab eventKey="output" title="Output">
                         <ScheduleDisplay schedules={this.state.schedules} scheduleApp={this} />
                     </Tab>
-                </Tabs>
-            </>
+                </Tabs> */}
+                <Route path="/output/" render={this.scheduleDisplayRouteRender} />
+                <Route path="/input/" component={CourseInput} />
+            </Router>
         )
     }
 }
@@ -761,6 +774,7 @@ ReactDOM.render(
     <ScheduleApp />,
     document.getElementById("root")
 );
+// export default ScheduleApp;
 
 //register service worker
 serviceWorker.register();
