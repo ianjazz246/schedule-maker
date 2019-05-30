@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
-import { LinkContainer } from 'react-router-bootstrap';
+import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap';
 
 import { ListGroup, ButtonGroup, Button, Dropdown, ToggleButton, ToggleButtonGroup, Alert, Navbar, Nav, Form } from "react-bootstrap";
 
@@ -191,9 +191,9 @@ class ScheduleApp extends React.Component {
                     <Navbar.Brand>Schedule Maker</Navbar.Brand>
                     <Nav variant="pills">
                         <Nav.Item>
-                            <LinkContainer to="/input">
+                            <IndexLinkContainer to="/">
                                 <Nav.Link>Input</Nav.Link>
-                            </LinkContainer>
+                            </IndexLinkContainer>
                         </Nav.Item>
                         
                         
@@ -216,7 +216,7 @@ class ScheduleApp extends React.Component {
                                         })
                                     }
                                 }}>
-                                    <LinkContainer to="/output">
+                                    <LinkContainer to="/output/">
                                         <Nav.Link>Output</Nav.Link>
                                         </LinkContainer>
                                 </Nav.Item>
@@ -234,8 +234,8 @@ class ScheduleApp extends React.Component {
                         <ScheduleDisplay schedules={this.state.schedules} scheduleApp={this} />
                     </Tab>
                 </Tabs> */}
-                <Route path="/output/" render={this.scheduleDisplayRouteRender} />
-                <Route path="/input/" component={CourseInput} />
+                <Route exact path="/output/" render={this.scheduleDisplayRouteRender} />
+                <Route exact path="/" component={CourseInput} />
             </Router>
         )
     }
