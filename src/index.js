@@ -186,40 +186,44 @@ class ScheduleApp extends React.Component {
         return (
             <Router
                 basename="/schedule-maker"
+                
             >
                 <Navbar bg="light">
                     <Navbar.Brand>Schedule Maker</Navbar.Brand>
-                    <Nav variant="pills">
-                        <Nav.Item>
-                            <IndexLinkContainer to="/">
-                                <Nav.Link>Input</Nav.Link>
+                    <Nav variant="pills" defaultActiveKey="/">
+                        {/* <Nav.Item> */}
+                            <IndexLinkContainer style={{cursor: "pointer"}} to="/">
+                                <Nav.Item className="nav-link" >Input</Nav.Item>
                             </IndexLinkContainer>
-                        </Nav.Item>
+                        {/* </Nav.Item> */}
                         
                         
-                            <Nav.Item 
-                                onSelect={(key) => {
-                                    if (key === "output") {
-                                        let classes = this.prepareSchedule(CoursesStore.getCourses());
-                                        // console.log(classes);
-                                        let schedules = this.makeSchedules(classes);
+                            {/* <Nav.Item  */}
+                                {/* > */}
+                                    <LinkContainer style={{cursor: "pointer"}} to="/output/">
+                                        <Nav.Item
+                                            className="nav-link"
+                                            onSelect={(key) => {
+                                                if (key === "output") {
+                                                    let classes = this.prepareSchedule(CoursesStore.getCourses());
+                                                    // console.log(classes);
+                                                    let schedules = this.makeSchedules(classes);
 
 
-                                        // this.setState({
-                                        //     schedules: this.makeSchedules(classes)
-                                        // });
+                                                    // this.setState({
+                                                    //     schedules: this.makeSchedules(classes)
+                                                    // });
 
-                                        // console.log(schedules);
+                                                    // console.log(schedules);
 
-                                        this.setState({
-                                            schedules
-                                        })
-                                    }
-                                }}>
-                                    <LinkContainer to="/output/">
-                                        <Nav.Link>Output</Nav.Link>
+                                                    this.setState({
+                                                        schedules
+                                                    });
+                                                }
+                                            }}
+                                >Output</Nav.Item>
                                         </LinkContainer>
-                                </Nav.Item>
+                                {/* </Nav.Item> */}
                         
                     </Nav>
 
