@@ -45,7 +45,7 @@ export default {
         for (const prop in newValues) {
             courses[index][prop] = newValues[prop];
         }
-
+        localStorage.setItem("courses", JSON.stringify(courses));
         emitter.emit("update");
     },
     subscribeAddRemove: function(callback) {
@@ -56,12 +56,14 @@ export default {
     },
     addCourse: function(index) {
         courses = courses.slice(0, index + 1).concat(new Class("", "", [], ids++), courses.slice(index + 1, courses.length));
+        localStorage.setItem("courses", JSON.stringify(courses));
         emitter.emit("addRemove");
     },
     removeCourse: function(index) {
         let coursesCopy = courses.slice();
         coursesCopy.splice(index, 1);
         courses = coursesCopy;
+        localStorage.setItem("courses", JSON.stringify(courses));
         emitter.emit("addRemove");
     },
     subscribeBlocksChange: function(callback) {

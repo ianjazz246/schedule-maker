@@ -243,6 +243,14 @@ class ScheduleApp extends React.Component {
             </Router>
         )
     }
+
+    componentDidMount() {
+        //get saved courses, if any, and display them
+        const savedCourses = JSON.parse(localStorage.getItem("courses"));
+        if (savedCourses && savedCourses.length < 1) {
+            let parseCourses = savedCourses.map(element => new Class(element.name, element.teacher, element.offeredBlocks, ))
+        }
+    }
 }
 
 
