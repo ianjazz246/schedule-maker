@@ -6,7 +6,7 @@ let emitter = new EventEmitter();
 
 let ids = 0;
 
-let blocks = 8;
+let numBlocks = 8;
 
 let courses = [new Class("", "", [], ids++)];
 
@@ -41,11 +41,13 @@ export default {
     unsubscribeUpdate: function(callback) {
         emitter.removeListener("update", callback);
     },
-    updateCourse: function(index, newValues) {
+    updateCourse: function(index, newValues, save=true) {
         for (const prop in newValues) {
             courses[index][prop] = newValues[prop];
         }
-        localStorage.setItem("courses", JSON.stringify(courses));
+        if (save) {
+            localStorage.setItem("courses", JSON.stringify(courses));
+        }
         emitter.emit("update");
     },
     subscribeAddRemove: function(callback) {
@@ -54,32 +56,54 @@ export default {
     unsubscribeAddRemove: function(callback) {
         emitter.removeListener("addRemove", callback);
     },
-    addCourse: function(index) {
+    addCourse: function(index, save=true) {
         courses = courses.slice(0, index + 1).concat(new Class("", "", [], ids++), courses.slice(index + 1, courses.length));
-        localStorage.setItem("courses", JSON.stringify(courses));
+        if (save) {
+            localStorage.setItem("courses", JSON.stringify(courses));
+        }
+        
         emitter.emit("addRemove");
     },
-    removeCourse: function(index) {
+    removeCourse: function(index, save=true) {
         let coursesCopy = courses.slice();
         coursesCopy.splice(index, 1);
         courses = coursesCopy;
-        localStorage.setItem("courses", JSON.stringify(courses));
+        if (save) {
+            localStorage.setItem("courses", JSON.stringify(courses));
+        }
+        
         emitter.emit("addRemove");
     },
-    subscribeBlocksChange: function(callback) {
-        emitter.addListener("blocksChange", callback);
-    },
-    unsubscribeBlocksChange: function(callback) {
-        emitter.removeListener("blocksChange", callback);
-    },
-    getBlocks: function() {
-        return blocks;
-    },
-    changeBlocks: function(newBlocks) {
-        if (newBlocks !== blocks) {
-            blocks = newBlocks;
-            emitter.emit("blocksChange");
+    setCourses: function(newCourses, save=true) {
+        courses = newCourses;
+        emitter.emit("addRemove");
+        if (save) {
+            localStorage.setItem("courses", JSON.stringify(courses));
         }
+    },
+    subscribeNumBlocksChange: function(callback) {
+        emitter.addListener("numBlocks", callback);
+    },
+    unsubscribeNumBlocksChange: function(callback) {
+        emitter.removeListener("numBlocks", callback);
+    },
+    getNumBlocks: function() {
+        return numBlocks;
+    },
+    //TODO: Rename to better
+    setNumBlocks: function(newNumBlocks, save=true) {
+        if (newNumBlocks !== numBlocks) {
+            numBlocks = newNumBlocks;
+            emitter.emit("numBlocks");
+        }
+        if (save) {
+            localStorage.setItem("numBlocks", newNumBlocks);
+        }
+    },
+    getNextId: function() {
+        return ids++;
+    },
+    resetIds: function() {
+        ids = 0;
     }
-
 }

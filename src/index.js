@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter, Route } from "react-router-dom";
 
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap';
 
@@ -16,7 +16,7 @@ import "./index.css";
 //import service worker for progressive web app
 import * as serviceWorker from './serviceWorker';
 
-// import Class from "./class.js";
+import Class from "./class.js";
 
 //Datastore
 import CoursesStore from "./CoursesStore.js";
@@ -48,12 +48,10 @@ class ScheduleApp extends React.Component {
 
     }
 
-
-
     prepareSchedule(classes) {
         //Prepare schedules
         let classTimes = [];
-        let numOfBlocks = CoursesStore.getBlocks();
+        let numOfBlocks = CoursesStore.getNumBlocks();
         classTimes.length = numOfBlocks;
 
         let reservedBlocks = [];
@@ -184,16 +182,15 @@ class ScheduleApp extends React.Component {
     render() {
         // console.log(this.state.courses);
         return (
-            <Router
-                basename="/schedule-maker"
-                
+            <BrowserRouter
+                basename="/schedule-maker" 
             >
                 <Navbar bg="light">
                     <Navbar.Brand>Schedule Maker</Navbar.Brand>
-                    <Nav variant="pills" defaultActiveKey="/">
+                    <Nav variant="tabs" defaultActiveKey="/">
                         {/* <Nav.Item> */}
                             <IndexLinkContainer style={{cursor: "pointer"}} to="/">
-                                <Nav.Item className="nav-link" >Input</Nav.Item>
+                                <Nav.Item className="nav-link">Enter Classes</Nav.Item>
                             </IndexLinkContainer>
                         {/* </Nav.Item> */}
                         
@@ -221,7 +218,9 @@ class ScheduleApp extends React.Component {
                                                     });
                                                 }
                                             }}
-                                >Output</Nav.Item>
+                                        >
+                                            View Schedules
+                                        </Nav.Item>
                                         </LinkContainer>
                                 {/* </Nav.Item> */}
                         
@@ -240,15 +239,21 @@ class ScheduleApp extends React.Component {
                 </Tabs> */}
                 <Route exact path="/output/" render={this.scheduleDisplayRouteRender} />
                 <Route exact path="/" component={CourseInput} />
-            </Router>
+            </BrowserRouter>
         )
     }
 
-    componentDidMount() {
+    componentWillMount() {
         //get saved courses, if any, and display them
         const savedCourses = JSON.parse(localStorage.getItem("courses"));
-        if (savedCourses && savedCourses.length < 1) {
-            let parseCourses = savedCourses.map(element => new Class(element.name, element.teacher, element.offeredBlocks, ))
+        const savedNumBlocks = localStorage.getItem("numBlocks");
+        if (savedCourses && savedCourses.length > 0) {
+            let parsedCourses = savedCourses.map(element => new Class(element.name, element.teacher, element.offeredBlocks, ));
+            CoursesStore.setCourses(parsedCourses);
+        }
+
+        if (typeof(savedNumBlocks) === "number") {
+            CoursesStore.setNumBlocks(savedNumBlocks);
         }
     }
 }
@@ -330,7 +335,7 @@ class ScheduleDisplay extends React.Component {
 
         let columns = [];
 
-        const blocks = CoursesStore.getBlocks();
+        const blocks = CoursesStore.getNumBlocks();
 
         let errorAlert = (
             <Alert variant="danger">
@@ -476,14 +481,18 @@ class CourseInput extends React.Component {
         this.state = {
             courses: CoursesStore.getCourses()
         };
+        console.log(this.state.courses);
         this.onAddRemove = this.onAddRemove.bind(this);
-        this.handleChange = this.handleChange.bind(this);
+        this.handleChange = this.handleNumBlocksChange.bind(this);
     }
 
     onAddRemove() {
+        const newCourses = CoursesStore.getCourses();
+        console.log(newCourses);
         this.setState({
-            courses: CoursesStore.getCourses()
+            courses: newCourses
         });
+        console.log(this.state.courses);
     }
  
     componentWillMount() {
@@ -497,18 +506,23 @@ class CourseInput extends React.Component {
         return false;
     }
 
-    handleChange(event) {
+    handleNumBlocksChange(event) {
         // let newValue = parseInt(event.target.value);
-        CoursesStore.changeBlocks(parseInt(event.target.value));
+        CoursesStore.setNumBlocks(parseInt(event.target.value));
         this.forceUpdate();
     }
 
     getInputValue() {
         let n;
-        if (isNaN((n = CoursesStore.getBlocks()))) {
+        if (isNaN((n = CoursesStore.getNumBlocks()))) {
                 return "";
         }
         return n;
+    }
+
+    handleRemoveAllButton() {
+        CoursesStore.setCourses([new Class("", "", [], CoursesStore.getNextId())]);
+        localStorage.removeItem("courses");
     }
 
     /* addCourse(index, appInstance) {
@@ -544,8 +558,9 @@ class CourseInput extends React.Component {
             <>
             <Form.Group controlId="blocksInput">
                 <Form.Label>Number of blocks:</Form.Label>
-                <Form.Control value={this.getInputValue()} onChange={this.handleChange} type="number" min="1"/>
+                <Form.Control value={this.getInputValue()} onChange={this.handleNumBlocksChange} type="number" min="1"/>
             </Form.Group>
+            <Button variant="primary" onClick={this.handleRemoveAllButton}>Remove all</Button>
             <ListGroup>
                 {
                     this.state.courses.map((course, index) => 
@@ -577,7 +592,7 @@ class CourseInputRow extends React.Component {
         this.onBlockUpdate = this.onBlockUpdate.bind(this);
         this.state = {
             course: CoursesStore.getCourses()[this.props.index].clone(),
-            blocks: CoursesStore.getBlocks()
+            blocks: CoursesStore.getNumBlocks()
         };
 
         // console.log(this.state.course);
@@ -651,7 +666,7 @@ class CourseInputRow extends React.Component {
     }
 
     onBlockUpdate() {
-        const newBlocks = CoursesStore.getBlocks();
+        const newBlocks = CoursesStore.getNumBlocks();
         if (!isNaN(newBlocks)) {
             this.setState({
             blocks: newBlocks
@@ -661,12 +676,12 @@ class CourseInputRow extends React.Component {
 
     componentWillMount() {
         CoursesStore.subscribeUpdate(this.onCourseUpdate);
-        CoursesStore.subscribeBlocksChange(this.onBlockUpdate);
+        CoursesStore.subscribeNumBlocksChange(this.onBlockUpdate);
     }
 
     componentWillUnmount() {
         CoursesStore.unsubscribeUpdate(this.onCourseUpdate);
-        CoursesStore.unsubscribeBlocksChange(this.onBlockUpdate);
+        CoursesStore.unsubscribeNumBlocksChange(this.onBlockUpdate);
     }
 
     /* shouldComponentUpdate(nextProps, nextState) {
