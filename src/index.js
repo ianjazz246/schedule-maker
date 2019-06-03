@@ -556,11 +556,16 @@ class CourseInput extends React.Component {
         // console.log(this.state.courses);
         return (
             <>
+            <div style={{position: "relative", paddingLeft: "1.25rem"}}>
             <Form.Group controlId="blocksInput">
                 <Form.Label>Number of blocks:</Form.Label>
                 <Form.Control value={this.getInputValue()} onChange={this.handleNumBlocksChange} type="number" min="1"/>
             </Form.Group>
-            <Button variant="primary" onClick={this.handleRemoveAllButton}>Remove all</Button>
+            <Button variant="primary" onClick={this.handleRemoveAllButton}
+                style={{position: "absolute", top: "50%", transform: "translateY(calc(-50% + 0.5rem))",marginLeft: "4px"}}>
+                Remove all
+            </Button>
+            </div>
             <ListGroup>
                 {
                     this.state.courses.map((course, index) => 
