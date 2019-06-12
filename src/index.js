@@ -25,7 +25,14 @@ import CoursesStore from "./CoursesStore.js";
 
 
 
-
+//not a general purpose function for checking any array, just in this case where I know both are arrays (not objects or maps, for instance), among other limitations
+function arraysEqual(arr1, arr2) {
+    if (arr1.length !== arr2.length) return false;
+    for (const i in arr1) {
+        if (arr1[i] !== arr2[i]) return false;
+    }
+    return true;
+}
 
 class ScheduleApp extends React.Component {
     constructor(props) {
@@ -248,7 +255,7 @@ class ScheduleApp extends React.Component {
         const savedCourses = JSON.parse(localStorage.getItem("courses"));
         const savedNumBlocks = localStorage.getItem("numBlocks");
         if (savedCourses && savedCourses.length > 0) {
-            let parsedCourses = savedCourses.map(element => new Class(element.name, element.teacher, element.offeredBlocks, ));
+            let parsedCourses = savedCourses.map(element => new Class(element.name, element.teacher, element.offeredBlocks, CoursesStore.getNextId()));
             CoursesStore.setCourses(parsedCourses);
         }
 
@@ -500,7 +507,7 @@ class CourseInput extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if (nextState.courses.length !== this.state.courses.length) {
+        if (!arraysEqual(this.state.courses, nextState.courses)) {
             return true;
         }
         return false;
@@ -522,7 +529,7 @@ class CourseInput extends React.Component {
 
     handleRemoveAllButton() {
         CoursesStore.setCourses([new Class("", "", [], CoursesStore.getNextId())]);
-        localStorage.removeItem("courses");
+        //localStorage.removeItem("courses");
     }
 
     /* addCourse(index, appInstance) {
@@ -557,12 +564,11 @@ class CourseInput extends React.Component {
         return (
             <>
             <div style={{position: "relative", paddingLeft: "1.25rem"}}>
-            <Form.Group controlId="blocksInput">
+            <Form.Group controlId="blocks-input">
                 <Form.Label>Number of blocks:</Form.Label>
                 <Form.Control value={this.getInputValue()} onChange={this.handleNumBlocksChange} type="number" min="1"/>
             </Form.Group>
-            <Button variant="primary" onClick={this.handleRemoveAllButton}
-                style={{position: "absolute", top: "50%", transform: "translateY(calc(-50% + 0.5rem))",marginLeft: "4px"}}>
+            <Button variant="primary" onClick={this.handleRemoveAllButton} id="remove-all-button">
                 Remove all
             </Button>
             </div>
@@ -644,15 +650,6 @@ class CourseInputRow extends React.Component {
     }
 
     onCourseUpdate() {
-
-        //not a general purpose function for checking any array, just in this case where I know both are arrays (not objects or maps, for instance)
-        function arraysEqual(arr1, arr2) {
-            if (arr1.length !== arr2.length) return false;
-            for (const i in arr1) {
-                if (arr1[i] !== arr2[i]) return false;
-            }
-            return true;
-        }
         // console.log("Setting Course");
         // console.log("Before:" + this.state.course.name);
 
