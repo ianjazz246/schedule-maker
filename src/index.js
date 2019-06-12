@@ -258,9 +258,21 @@ class ScheduleApp extends React.Component {
             let parsedCourses = savedCourses.map(element => new Class(element.name, element.teacher, element.offeredBlocks, CoursesStore.getNextId()));
             CoursesStore.setCourses(parsedCourses);
         }
-
         if (typeof(savedNumBlocks) === "number") {
             CoursesStore.setNumBlocks(savedNumBlocks);
+        }
+
+        //fetch announcer json.
+        //TODO
+        //Use a different source because I don't think this will continue to be updated
+
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://kajchang.github.io/LowellAPI/announcer.json");
+        xhr.responseType = "json";
+        xhr.onload = (data) => {
+            if (xhr.status === 200) {
+                
+            }
         }
     }
 }
@@ -488,18 +500,15 @@ class CourseInput extends React.Component {
         this.state = {
             courses: CoursesStore.getCourses()
         };
-        console.log(this.state.courses);
         this.onAddRemove = this.onAddRemove.bind(this);
         this.handleChange = this.handleNumBlocksChange.bind(this);
     }
 
     onAddRemove() {
         const newCourses = CoursesStore.getCourses();
-        console.log(newCourses);
         this.setState({
             courses: newCourses
         });
-        console.log(this.state.courses);
     }
  
     componentWillMount() {
@@ -515,6 +524,7 @@ class CourseInput extends React.Component {
 
     handleNumBlocksChange(event) {
         // let newValue = parseInt(event.target.value);
+
         CoursesStore.setNumBlocks(parseInt(event.target.value));
         this.forceUpdate();
     }
@@ -566,7 +576,7 @@ class CourseInput extends React.Component {
             <div style={{position: "relative", paddingLeft: "1.25rem"}}>
             <Form.Group controlId="blocks-input">
                 <Form.Label>Number of blocks:</Form.Label>
-                <Form.Control value={this.getInputValue()} onChange={this.handleNumBlocksChange} type="number" min="1"/>
+                <Form.Control value={this.getInputValue()} onChange={(event) => {this.handleNumBlocksChange(event)}} type="number" min="1"/>
             </Form.Group>
             <Button variant="primary" onClick={this.handleRemoveAllButton} id="remove-all-button">
                 Remove all
